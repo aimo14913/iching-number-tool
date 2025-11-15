@@ -594,18 +594,67 @@
                     const goodEnergies = ['天醫', '生氣', '延年', '伏位'];
                     const isGoodDominant = goodEnergies.includes(dominantEnergy);
 
-                    // 生成綜合磁場分析
-                    let comprehensiveAnalysis = '';
-                    const existingEnergies = [];
-                    for (let energy in energyCount) {
-                        if (energyCount[energy] > 0) {
-                            existingEnergies.push({
-                                name: energy,
-                                count: energyCount[energy],
-                                desc: energyDescriptions[energy]
-                            });
+                    // 統計吉星和凶星數量
+                    const goodCount = (energyCount['天醫'] || 0) + (energyCount['生氣'] || 0) +
+                                    (energyCount['延年'] || 0) + (energyCount['伏位'] || 0);
+                    const badCount = (energyCount['禍害'] || 0) + (energyCount['六煞'] || 0) +
+                                   (energyCount['五鬼'] || 0) + (energyCount['絕命'] || 0);
+
+                    // 生成綜合分析文字
+                    function generateComprehensiveAnalysis() {
+                        let analysis = {
+                            summary: '',
+                            fortune: '',
+                            career: '',
+                            money: '',
+                            love: '',
+                            relationship: ''
+                        };
+
+                        // 根據主要磁場和其他磁場組合生成分析
+                        const mainDesc = energyDescriptions[dominantEnergy];
+
+                        // 整體概述
+                        analysis.summary = `此號碼以「${dominantEnergy}」磁場為主（${energyCount[dominantEnergy]}組），`;
+                        if (goodCount > badCount) {
+                            analysis.summary += `整體吉星磁場（${goodCount}組）多於凶星（${badCount}組），運勢較為順遂。`;
+                        } else if (badCount > goodCount) {
+                            analysis.summary += `凶星磁場（${badCount}組）多於吉星（${goodCount}組），才華橫溢但需注意平衡。`;
+                        } else {
+                            analysis.summary += `吉星與凶星各${goodCount}組，運氣與才華並存，需善加運用。`;
                         }
+
+                        // 運勢分析
+                        analysis.fortune = mainDesc.fortune;
+                        if (energyCount['生氣'] > 0) analysis.fortune += ' 有生氣磁場助力，貴人運強，關鍵時刻有人相助。';
+                        if (energyCount['五鬼'] > 0) analysis.fortune += ' 但需注意五鬼磁場帶來的變化莫測，保持穩定心態。';
+                        if (energyCount['絕命'] > 0) analysis.fortune += ' 絕命磁場使運勢起伏較大，需做好風險管理。';
+
+                        // 事業分析
+                        analysis.career = mainDesc.career;
+                        if (energyCount['延年'] > 0) analysis.career += ' 配合延年磁場，領導能力突出，事業發展穩健。';
+                        if (energyCount['禍害'] > 0) analysis.career += ' 需注意禍害磁場，工作中避免口舌是非，謹言慎行。';
+
+                        // 財運分析
+                        analysis.money = mainDesc.money;
+                        if (energyCount['天醫'] > 0 && dominantEnergy !== '天醫') analysis.money += ' 天醫磁場加持，財運亨通，理財能力佳。';
+                        if (energyCount['絕命'] > 0) analysis.money += ' 絕命磁場建議謹慎投資，避免高風險項目。';
+
+                        // 愛情分析
+                        analysis.love = mainDesc.love;
+                        if (energyCount['六煞'] > 0) analysis.love += ' 六煞磁場帶來桃花，但需理智選擇，避免爛桃花。';
+                        if (energyCount['生氣'] > 0 && dominantEnergy !== '生氣') analysis.love += ' 生氣磁場增加人緣，感情機會多。';
+
+                        // 人際關係分析
+                        analysis.relationship = mainDesc.relationship;
+                        if (energyCount['生氣'] > 0 && dominantEnergy !== '生氣') analysis.relationship += ' 生氣磁場助力，人際關係良好。';
+                        if (energyCount['禍害'] > 0 && dominantEnergy !== '禍害') analysis.relationship += ' 需留意禍害磁場影響，控制情緒，避免衝突。';
+                        if (energyCount['六煞'] > 0 && dominantEnergy !== '六煞') analysis.relationship += ' 六煞磁場需注意人際糾葛，保持距離。';
+
+                        return analysis;
                     }
+
+                    const comprehensiveAnalysis = generateComprehensiveAnalysis();
 
                     // 生成磁場轉化訊息
                     let transformationHTML = '';
@@ -623,50 +672,30 @@
                         `;
                     }
 
-                    // 生成所有磁場的綜合分析
-                    comprehensiveAnalysis = existingEnergies.map(e => {
-                        const isGood = goodEnergies.includes(e.name);
-                        const bgColor = isGood ? '#e8f5e9' : '#fff3e0';
-                        const borderColor = isGood ? '#4caf50' : '#ff9800';
-                        return `
-                            <div style="margin-bottom: 15px; padding: 15px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
-                                <p style="font-weight: 600; font-size: 1.1em; margin-bottom: 8px; color: ${borderColor};">
-                                    ${e.name}（${energyMap[e.name].element}）- ${e.count}組 ${isGood ? '✨' : '⚡'}
-                                </p>
-                                <p style="font-size: 0.95em; color: #555; margin-bottom: 8px;">${e.desc.summary}</p>
-                                <details style="margin-top: 10px;">
-                                    <summary style="cursor: pointer; color: #666; font-weight: 500;">查看詳細分析</summary>
-                                    <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 5px;">
-                                        <p style="margin-bottom: 8px;"><strong>🔮 運勢：</strong>${e.desc.fortune}</p>
-                                        <p style="margin-bottom: 8px;"><strong>💼 事業：</strong>${e.desc.career}</p>
-                                        <p style="margin-bottom: 8px;"><strong>💰 財運：</strong>${e.desc.money}</p>
-                                        <p style="margin-bottom: 8px;"><strong>💕 愛情：</strong>${e.desc.love}</p>
-                                        <p style="margin-bottom: 8px;"><strong>👥 人際：</strong>${e.desc.relationship}</p>
-                                    </div>
-                                </details>
-                            </div>
-                        `;
-                    }).join('');
-
                     summary.innerHTML = `
                         <div class="summary-title">💎 整體能量分析</div>
                         <div class="summary-content">
-                            <p style="font-size: 1.1em; margin-bottom: 15px; padding: 12px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 8px;">
-                                <strong>主要磁場：</strong>${dominantEnergy}（${energyMap[dominantEnergy].element}）- ${energyCount[dominantEnergy]} 組合
-                                <span style="color: ${isGoodDominant ? '#11998e' : '#ee0979'};">
-                                    ${isGoodDominant ? '✨ 吉星磁場（運氣為主）' : '⚡ 凶星磁場（才華為主）'}
-                                </span>
+                            <p style="font-size: 1.1em; margin-bottom: 15px;"><strong>主要磁場：</strong>${dominantEnergy}（${energyMap[dominantEnergy].element}）- ${energyCount[dominantEnergy]} 組合
+                            <span style="color: ${isGoodDominant ? '#11998e' : '#ee0979'};">
+                                ${isGoodDominant ? '✨ 吉星磁場（運氣為主）' : '⚡ 凶星磁場（才華為主）'}
+                            </span></p>
+
+                            <p style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #667eea;">
+                                ${comprehensiveAnalysis.summary}
                             </p>
 
                             ${transformationHTML}
 
-                            <div style="margin-top: 20px;">
-                                <p style="font-weight: 600; font-size: 1.2em; margin-bottom: 15px; color: #667eea;">📊 綜合磁場分析</p>
-                                ${comprehensiveAnalysis}
+                            <div style="margin-top: 15px;">
+                                <p style="margin-bottom: 12px;"><strong>🔮 運勢分析：</strong><br>${comprehensiveAnalysis.fortune}</p>
+                                <p style="margin-bottom: 12px;"><strong>💼 工作事業：</strong><br>${comprehensiveAnalysis.career}</p>
+                                <p style="margin-bottom: 12px;"><strong>💰 金錢財運：</strong><br>${comprehensiveAnalysis.money}</p>
+                                <p style="margin-bottom: 12px;"><strong>💕 愛情婚姻：</strong><br>${comprehensiveAnalysis.love}</p>
+                                <p style="margin-bottom: 12px;"><strong>👥 人際關係：</strong><br>${comprehensiveAnalysis.relationship}</p>
                             </div>
 
-                            <p style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 8px; font-weight: 500; color: #555;">
-                                此號碼共包含 ${totalCount} 個數字組合，以「${dominantEnergy}」能量最為顯著。
+                            <p style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 8px; font-weight: 500;">
+                                📊 此號碼共包含 ${totalCount} 個數字組合，吉星${goodCount}組，凶星${badCount}組。
                                 ${isGoodDominant ? '整體運勢較佳，適合穩定發展，把握機會可創造佳績。' : '才華橫溢，具有特殊天賦，需注意平衡與調和各方面關係。'}
                             </p>
                         </div>
