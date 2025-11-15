@@ -343,11 +343,15 @@
                 let energy = null;
                 let note = '';
 
-                // 規則：只要有0就是伏位
-                if (first === '0' || second === '0') {
-                    energy = '伏位';
-                    note = '含0→伏位';
-                    notes.push(`位置 ${i + 1}-${i + 2}: "${pair}" 含有0，判定為伏位`);
+                // 規則：0改成與相鄰數字相同
+                if (first === '0') {
+                    pair = second + second;
+                    note = '0改成相鄰數字';
+                    notes.push(`位置 ${i + 1}-${i + 2}: "0${second}" → "${pair}"（0改成${second}）`);
+                } else if (second === '0') {
+                    pair = first + first;
+                    note = '0改成相鄰數字';
+                    notes.push(`位置 ${i + 1}-${i + 2}: "${first}0" → "${pair}"（0改成${first}）`);
                 }
                 // 看法一：5在頭尾視為伏位（與相鄰數字相同）
                 else if (first === '5') {
@@ -465,14 +469,13 @@
 
                 // 使用 setTimeout 確保動畫效果
                 setTimeout(() => {
-                    // 排除伏位，找出主要磁場
+                    // 找出出現次數最多的磁場
                     let dominantEnergy = null;
                     let maxCount = 0;
                     let maxLevel = 5; // 等級越小越強
 
-                    // 先找出非伏位磁場中出現次數最多的
+                    // 找出出現次數最多的磁場
                     for (let energy in energyCount) {
-                        if (energy === '伏位') continue; // 排除伏位
                         if (energyCount[energy] > maxCount) {
                             maxCount = energyCount[energy];
                             dominantEnergy = energy;
@@ -482,7 +485,6 @@
                     // 如果有多個磁場出現次數相同，選擇等級最高（Lv.1）的
                     if (dominantEnergy && maxCount > 0) {
                         for (let energy in energyCount) {
-                            if (energy === '伏位') continue;
                             if (energyCount[energy] === maxCount) {
                                 // 找出這個磁場在 pairs 中的最高等級
                                 let minLevel = 5;
@@ -498,11 +500,6 @@
                                 }
                             }
                         }
-                    }
-
-                    // 如果所有都是伏位，才使用伏位
-                    if (!dominantEnergy || maxCount === 0) {
-                        dominantEnergy = '伏位';
                     }
 
                     const goodEnergies = ['天醫', '生氣', '延年', '伏位'];
