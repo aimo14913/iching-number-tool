@@ -114,187 +114,26 @@
             }
         }
 
-        .processing-steps {
-            background: #f0f8ff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-
-        .processing-steps h4 {
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .processing-steps ol {
-            margin-left: 20px;
-            color: #555;
-            line-height: 1.8;
-        }
-
-        .number-display {
-            text-align: center;
-            font-size: 1.5em;
-            color: #333;
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-        }
-
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .energy-card {
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: 600;
-            transition: transform 0.2s;
-            position: relative;
-        }
-
-        .energy-card:hover {
-            transform: scale(1.05);
-        }
-
-        .energy-badge {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 255, 255, 0.3);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.7em;
-        }
-
-        .天醫 {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-            color: white;
-        }
-
-        .生氣 {
-            background: linear-gradient(135deg, #ee0979 0%, #ff6a00 100%);
-            color: white;
-        }
-
-        .延年 {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-
-        .伏位 {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .絕命 {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .禍害 {
-            background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);
-            color: white;
-        }
-
-        .六煞 {
-            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
-            color: white;
-        }
-
-        .五鬼 {
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            color: #333;
-        }
-
-        .pairs-container {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .pairs-title {
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 15px;
-            font-size: 1.2em;
-        }
-
-        .pair-item {
-            display: inline-block;
-            padding: 8px 15px;
-            margin: 5px;
-            border-radius: 20px;
-            font-weight: 600;
-            color: white;
-            font-size: 0.9em;
-            position: relative;
-        }
-
-        .level-badge {
-            font-size: 0.7em;
-            opacity: 0.9;
-            margin-left: 5px;
-        }
-
         .summary {
-            margin-top: 25px;
-            padding: 20px;
+            margin-top: 30px;
+            padding: 30px;
             background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         }
 
         .summary-title {
             font-weight: 600;
             color: #333;
-            margin-bottom: 10px;
-            font-size: 1.2em;
+            margin-bottom: 15px;
+            font-size: 1.5em;
         }
 
         .summary-content {
             color: #555;
-            line-height: 1.6;
-        }
-
-        .energy-description {
-            margin-top: 20px;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
-        }
-
-        .energy-description h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .energy-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.9em;
-        }
-
-        .energy-table th,
-        .energy-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .energy-table th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #667eea;
+            line-height: 1.8;
+            font-size: 1.05em;
         }
 
         @media (max-width: 600px) {
@@ -304,10 +143,6 @@
 
             h1 {
                 font-size: 2em;
-            }
-
-            .analysis-grid {
-                grid-template-columns: repeat(2, 1fr);
             }
         }
     </style>
@@ -325,85 +160,7 @@
         <button class="button" onclick="analyzeNumber()">🔍 開始分析</button>
 
         <div class="results" id="results">
-            <div class="processing-steps" id="processingSteps"></div>
-
-            <div class="number-display" id="numberDisplay"></div>
-
-            <div class="analysis-grid" id="analysisGrid"></div>
-
-            <div class="pairs-container" id="pairsContainer"></div>
-
             <div class="summary" id="summary"></div>
-
-            <div class="energy-description">
-                <h3>📖 八星磁場完整解析</h3>
-                <p style="margin-bottom: 15px; color: #667eea; font-weight: 600;">
-                    ✨ 吉星磁場（代表運氣）：生氣、延年、天醫、伏位<br>
-                    ⚡ 凶星磁場（代表才華）：禍害、六煞、五鬼、絕命
-                </p>
-
-                <table class="energy-table">
-                    <thead>
-                        <tr>
-                            <th>磁場</th>
-                            <th>五行</th>
-                            <th>數字組合（強→弱）</th>
-                            <th>核心特質</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>天醫</strong></td>
-                            <td>土</td>
-                            <td>13/31 > 68/86 > 49/94 > 27/72</td>
-                            <td>財富、聰明、婚姻、善良</td>
-                        </tr>
-                        <tr>
-                            <td><strong>生氣</strong></td>
-                            <td>木</td>
-                            <td>14/41 > 67/76 > 39/93 > 28/82</td>
-                            <td>貴人、人緣、開朗、隨緣</td>
-                        </tr>
-                        <tr>
-                            <td><strong>延年</strong></td>
-                            <td>金</td>
-                            <td>19/91 > 78/87 > 34/43 > 26/62</td>
-                            <td>領導、事業、成功、健康</td>
-                        </tr>
-                        <tr>
-                            <td><strong>伏位</strong></td>
-                            <td>木</td>
-                            <td>11/22/99/88 > 33/44/66/77</td>
-                            <td>等待、保守、被動、思考</td>
-                        </tr>
-                        <tr>
-                            <td><strong>絕命</strong></td>
-                            <td>金</td>
-                            <td>12/21 > 69/96 > 48/84 > 37/73</td>
-                            <td>投資、極端、直爽、孤獨</td>
-                        </tr>
-                        <tr>
-                            <td><strong>禍害</strong></td>
-                            <td>土</td>
-                            <td>17/71 > 89/98 > 46/64 > 23/32</td>
-                            <td>口才、暴躁、病痛、是非</td>
-                        </tr>
-                        <tr>
-                            <td><strong>六煞</strong></td>
-                            <td>水</td>
-                            <td>16/61 > 47/74 > 38/83 > 29/92</td>
-                            <td>桃花、人際、情緒、糾葛</td>
-                        </tr>
-                        <tr>
-                            <td><strong>五鬼</strong></td>
-                            <td>火</td>
-                            <td>18/81 > 79/97 > 36/63 > 24/42</td>
-                            <td>智慧、才華、變化、凶險</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
         </div>
     </div>
 
@@ -687,59 +444,8 @@
         }
 
         function displayResults(originalInput, processedNumber, pairs, energyCount, processingSteps) {
-            // 顯示處理步驟
-            const stepsDiv = document.getElementById('processingSteps');
-            if (processingSteps.length > 0) {
-                stepsDiv.innerHTML = '<h4>🔄 處理過程</h4><ol>' +
-                    processingSteps.map(step => `<li>${step}</li>`).join('') +
-                    '</ol>';
-            } else {
-                stepsDiv.innerHTML = '';
-            }
-
-            // 顯示數字
-            document.getElementById('numberDisplay').innerHTML =
-                `<strong>原始輸入：</strong>${originalInput}<br>` +
-                `<strong>處理後數字：</strong>${processedNumber}<br>` +
-                `<strong>數字組合數：</strong>${pairs.length} 組`;
-
-            // 顯示能量統計
-            const analysisGrid = document.getElementById('analysisGrid');
-            analysisGrid.innerHTML = '';
-
-            const totalCount = pairs.length;
-            for (let energy in energyCount) {
-                if (energyCount[energy] > 0) {
-                    const percentage = ((energyCount[energy] / totalCount) * 100).toFixed(1);
-                    const card = document.createElement('div');
-                    card.className = `energy-card ${energy}`;
-                    card.innerHTML = `
-                        <div class="energy-badge">${energyMap[energy].element}</div>
-                        <div>${energy}</div>
-                        <div style="font-size: 1.5em; margin: 10px 0;">${energyCount[energy]}</div>
-                        <div style="font-size: 0.9em;">${percentage}%</div>
-                        <div style="font-size: 0.75em; margin-top: 5px; opacity: 0.9;">${energyMap[energy].traits}</div>
-                    `;
-                    analysisGrid.appendChild(card);
-                }
-            }
-
-            // 顯示詳細數字對
-            const pairsContainer = document.getElementById('pairsContainer');
-            pairsContainer.innerHTML = '<div class="pairs-title">數字組合詳細分析：</div>';
-
-            pairs.forEach(({ original, pair, energy, level, note }) => {
-                const pairElement = document.createElement('span');
-                pairElement.className = `pair-item ${energy}`;
-                let displayText = original === pair ? pair : `${original}→${pair}`;
-                if (level) displayText += ` <span class="level-badge">Lv.${level}</span>`;
-                if (note) displayText += ` (${note})`;
-                displayText += ` [${energy}]`;
-                pairElement.innerHTML = displayText;
-                pairsContainer.appendChild(pairElement);
-            });
-
             // 生成總結
+            const totalCount = pairs.length;
             const summary = document.getElementById('summary');
             const dominantEnergy = Object.keys(energyCount).reduce((a, b) =>
                 energyCount[a] > energyCount[b] ? a : b
