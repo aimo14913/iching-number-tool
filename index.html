@@ -284,6 +284,78 @@
             }
         };
 
+        // 檢查磁場轉化規則
+        function checkTransformations(pairs) {
+            const transformations = [];
+
+            for (let i = 0; i < pairs.length; i++) {
+                const current = pairs[i].energy;
+
+                // 規則1：天醫欺絕命
+                if (i < pairs.length - 1) {
+                    const next = pairs[i + 1].energy;
+                    if (current === '天醫' && next === '絕命') {
+                        transformations.push({
+                            type: '天醫欺絕命',
+                            position: i,
+                            description: '天醫磁場化解了絕命的負面影響，轉危為安'
+                        });
+                    }
+
+                    // 規則2：延年壓六煞
+                    if (current === '延年' && next === '六煞') {
+                        transformations.push({
+                            type: '延年壓六煞',
+                            position: i,
+                            description: '延年磁場壓制六煞，改善人際關係和感情運勢'
+                        });
+                    }
+
+                    // 規則3：(生氣+延年)化禍害
+                    if (current === '生氣' && next === '延年') {
+                        transformations.push({
+                            type: '生氣+延年化禍害',
+                            position: i,
+                            description: '生氣配延年組合，能化解禍害磁場的口舌是非'
+                        });
+                    }
+
+                    // 規則4：(生氣+伏位)化禍害
+                    if (current === '生氣' && next === '伏位') {
+                        transformations.push({
+                            type: '生氣+伏位化禍害',
+                            position: i,
+                            description: '生氣配伏位組合，能化解禍害磁場的負面影響'
+                        });
+                    }
+
+                    // 規則5：(生氣+生氣)化禍害
+                    if (current === '生氣' && next === '生氣') {
+                        transformations.push({
+                            type: '生氣+生氣化禍害',
+                            position: i,
+                            description: '雙生氣組合，能化解禍害磁場，貴人運加倍'
+                        });
+                    }
+                }
+
+                // 規則6：(生氣+天醫+延年)化五鬼（需要連續三個）
+                if (i < pairs.length - 2) {
+                    if (pairs[i].energy === '生氣' &&
+                        pairs[i + 1].energy === '天醫' &&
+                        pairs[i + 2].energy === '延年') {
+                        transformations.push({
+                            type: '生氣+天醫+延年化五鬼',
+                            position: i,
+                            description: '生氣、天醫、延年三吉星連珠，能化解五鬼磁場，運勢極佳'
+                        });
+                    }
+                }
+            }
+
+            return transformations;
+        }
+
         // 英文字母轉數字 A-Z => 1-26
         function convertLettersToNumbers(input) {
             let result = '';
@@ -444,15 +516,18 @@
                     }
                 });
 
+                // 檢查磁場轉化規則
+                const transformations = checkTransformations(pairs);
+
                 // 顯示結果
-                displayResults(input, currentNumber, pairs, energyCount, processingSteps);
+                displayResults(input, currentNumber, pairs, energyCount, processingSteps, transformations);
             } catch (error) {
                 console.error('分析過程發生錯誤:', error);
                 alert('分析過程發生錯誤，請重新嘗試！');
             }
         }
 
-        function displayResults(originalInput, processedNumber, pairs, energyCount, processingSteps) {
+        function displayResults(originalInput, processedNumber, pairs, energyCount, processingSteps, transformations) {
             try {
                 // 生成總結
                 const totalCount = pairs.length;
@@ -507,6 +582,22 @@
 
                     const energyDesc = energyDescriptions[dominantEnergy];
 
+                    // 生成磁場轉化訊息
+                    let transformationHTML = '';
+                    if (transformations && transformations.length > 0) {
+                        transformationHTML = `
+                            <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); border-radius: 8px; border-left: 4px solid #f39c12;">
+                                <p style="font-weight: 600; color: #d35400; margin-bottom: 10px;">✨ 磁場轉化能量</p>
+                                ${transformations.map(t => `
+                                    <div style="margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.7); border-radius: 5px;">
+                                        <strong style="color: #e67e22;">【${t.type}】</strong><br>
+                                        <span style="color: #555; font-size: 0.95em;">${t.description}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+
                     summary.innerHTML = `
                         <div class="summary-title">💎 整體能量分析</div>
                         <div class="summary-content">
@@ -518,6 +609,8 @@
                             <p style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #667eea;">
                                 ${energyDesc.summary}
                             </p>
+
+                            ${transformationHTML}
 
                             <div style="margin-top: 15px;">
                                 <p style="margin-bottom: 12px;"><strong>🔮 運勢分析：</strong><br>${energyDesc.fortune}</p>
