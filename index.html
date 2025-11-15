@@ -551,13 +551,14 @@
 
                 // 使用 setTimeout 確保動畫效果
                 setTimeout(() => {
-                    // 找出出現次數最多的磁場
+                    // 排除伏位，找出主要磁場
                     let dominantEnergy = null;
                     let maxCount = 0;
                     let maxLevel = 5; // 等級越小越強
 
-                    // 找出出現次數最多的磁場
+                    // 先找出非伏位磁場中出現次數最多的
                     for (let energy in energyCount) {
+                        if (energy === '伏位') continue; // 排除伏位
                         if (energyCount[energy] > maxCount) {
                             maxCount = energyCount[energy];
                             dominantEnergy = energy;
@@ -567,6 +568,7 @@
                     // 如果有多個磁場出現次數相同，選擇等級最高（Lv.1）的
                     if (dominantEnergy && maxCount > 0) {
                         for (let energy in energyCount) {
+                            if (energy === '伏位') continue;
                             if (energyCount[energy] === maxCount) {
                                 // 找出這個磁場在 pairs 中的最高等級
                                 let minLevel = 5;
@@ -584,10 +586,26 @@
                         }
                     }
 
+                    // 如果所有都是伏位，才使用伏位
+                    if (!dominantEnergy || maxCount === 0) {
+                        dominantEnergy = '伏位';
+                    }
+
                     const goodEnergies = ['天醫', '生氣', '延年', '伏位'];
                     const isGoodDominant = goodEnergies.includes(dominantEnergy);
 
-                    const energyDesc = energyDescriptions[dominantEnergy];
+                    // 生成綜合磁場分析
+                    let comprehensiveAnalysis = '';
+                    const existingEnergies = [];
+                    for (let energy in energyCount) {
+                        if (energyCount[energy] > 0) {
+                            existingEnergies.push({
+                                name: energy,
+                                count: energyCount[energy],
+                                desc: energyDescriptions[energy]
+                            });
+                        }
+                    }
 
                     // 生成磁場轉化訊息
                     let transformationHTML = '';
@@ -605,30 +623,50 @@
                         `;
                     }
 
+                    // 生成所有磁場的綜合分析
+                    comprehensiveAnalysis = existingEnergies.map(e => {
+                        const isGood = goodEnergies.includes(e.name);
+                        const bgColor = isGood ? '#e8f5e9' : '#fff3e0';
+                        const borderColor = isGood ? '#4caf50' : '#ff9800';
+                        return `
+                            <div style="margin-bottom: 15px; padding: 15px; background: ${bgColor}; border-radius: 8px; border-left: 4px solid ${borderColor};">
+                                <p style="font-weight: 600; font-size: 1.1em; margin-bottom: 8px; color: ${borderColor};">
+                                    ${e.name}（${energyMap[e.name].element}）- ${e.count}組 ${isGood ? '✨' : '⚡'}
+                                </p>
+                                <p style="font-size: 0.95em; color: #555; margin-bottom: 8px;">${e.desc.summary}</p>
+                                <details style="margin-top: 10px;">
+                                    <summary style="cursor: pointer; color: #666; font-weight: 500;">查看詳細分析</summary>
+                                    <div style="margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.7); border-radius: 5px;">
+                                        <p style="margin-bottom: 8px;"><strong>🔮 運勢：</strong>${e.desc.fortune}</p>
+                                        <p style="margin-bottom: 8px;"><strong>💼 事業：</strong>${e.desc.career}</p>
+                                        <p style="margin-bottom: 8px;"><strong>💰 財運：</strong>${e.desc.money}</p>
+                                        <p style="margin-bottom: 8px;"><strong>💕 愛情：</strong>${e.desc.love}</p>
+                                        <p style="margin-bottom: 8px;"><strong>👥 人際：</strong>${e.desc.relationship}</p>
+                                    </div>
+                                </details>
+                            </div>
+                        `;
+                    }).join('');
+
                     summary.innerHTML = `
                         <div class="summary-title">💎 整體能量分析</div>
                         <div class="summary-content">
-                            <p style="font-size: 1.1em; margin-bottom: 15px;"><strong>主要磁場：</strong>${dominantEnergy}（${energyMap[dominantEnergy].element}）- ${energyCount[dominantEnergy]} 組合
-                            <span style="color: ${isGoodDominant ? '#11998e' : '#ee0979'};">
-                                ${isGoodDominant ? '✨ 吉星磁場（運氣為主）' : '⚡ 凶星磁場（才華為主）'}
-                            </span></p>
-
-                            <p style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #667eea;">
-                                ${energyDesc.summary}
+                            <p style="font-size: 1.1em; margin-bottom: 15px; padding: 12px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 8px;">
+                                <strong>主要磁場：</strong>${dominantEnergy}（${energyMap[dominantEnergy].element}）- ${energyCount[dominantEnergy]} 組合
+                                <span style="color: ${isGoodDominant ? '#11998e' : '#ee0979'};">
+                                    ${isGoodDominant ? '✨ 吉星磁場（運氣為主）' : '⚡ 凶星磁場（才華為主）'}
+                                </span>
                             </p>
 
                             ${transformationHTML}
 
-                            <div style="margin-top: 15px;">
-                                <p style="margin-bottom: 12px;"><strong>🔮 運勢分析：</strong><br>${energyDesc.fortune}</p>
-                                <p style="margin-bottom: 12px;"><strong>💼 工作事業：</strong><br>${energyDesc.career}</p>
-                                <p style="margin-bottom: 12px;"><strong>💰 金錢財運：</strong><br>${energyDesc.money}</p>
-                                <p style="margin-bottom: 12px;"><strong>💕 愛情婚姻：</strong><br>${energyDesc.love}</p>
-                                <p style="margin-bottom: 12px;"><strong>👥 人際關係：</strong><br>${energyDesc.relationship}</p>
+                            <div style="margin-top: 20px;">
+                                <p style="font-weight: 600; font-size: 1.2em; margin-bottom: 15px; color: #667eea;">📊 綜合磁場分析</p>
+                                ${comprehensiveAnalysis}
                             </div>
 
-                            <p style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 8px; font-weight: 500;">
-                                📊 此號碼共包含 ${totalCount} 個數字組合，整體以「${dominantEnergy}」能量最為顯著。
+                            <p style="margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 8px; font-weight: 500; color: #555;">
+                                此號碼共包含 ${totalCount} 個數字組合，以「${dominantEnergy}」能量最為顯著。
                                 ${isGoodDominant ? '整體運勢較佳，適合穩定發展，把握機會可創造佳績。' : '才華橫溢，具有特殊天賦，需注意平衡與調和各方面關係。'}
                             </p>
                         </div>
