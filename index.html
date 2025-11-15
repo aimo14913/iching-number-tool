@@ -465,9 +465,45 @@
 
                 // 使用 setTimeout 確保動畫效果
                 setTimeout(() => {
-                    const dominantEnergy = Object.keys(energyCount).reduce((a, b) =>
-                        energyCount[a] > energyCount[b] ? a : b
-                    );
+                    // 排除伏位，找出主要磁場
+                    let dominantEnergy = null;
+                    let maxCount = 0;
+                    let maxLevel = 5; // 等級越小越強
+
+                    // 先找出非伏位磁場中出現次數最多的
+                    for (let energy in energyCount) {
+                        if (energy === '伏位') continue; // 排除伏位
+                        if (energyCount[energy] > maxCount) {
+                            maxCount = energyCount[energy];
+                            dominantEnergy = energy;
+                        }
+                    }
+
+                    // 如果有多個磁場出現次數相同，選擇等級最高（Lv.1）的
+                    if (dominantEnergy && maxCount > 0) {
+                        for (let energy in energyCount) {
+                            if (energy === '伏位') continue;
+                            if (energyCount[energy] === maxCount) {
+                                // 找出這個磁場在 pairs 中的最高等級
+                                let minLevel = 5;
+                                pairs.forEach(pair => {
+                                    if (pair.energy === energy && pair.level > 0) {
+                                        minLevel = Math.min(minLevel, pair.level);
+                                    }
+                                });
+
+                                if (minLevel < maxLevel) {
+                                    maxLevel = minLevel;
+                                    dominantEnergy = energy;
+                                }
+                            }
+                        }
+                    }
+
+                    // 如果所有都是伏位，才使用伏位
+                    if (!dominantEnergy || maxCount === 0) {
+                        dominantEnergy = '伏位';
+                    }
 
                     const goodEnergies = ['天醫', '生氣', '延年', '伏位'];
                     const isGoodDominant = goodEnergies.includes(dominantEnergy);
