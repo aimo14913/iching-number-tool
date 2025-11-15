@@ -288,12 +288,19 @@
         function checkTransformations(pairs) {
             const transformations = [];
 
+            // 先統計所有磁場
+            const hasEnergy = {};
+            pairs.forEach(pair => {
+                hasEnergy[pair.energy] = true;
+            });
+
             for (let i = 0; i < pairs.length; i++) {
                 const current = pairs[i].energy;
 
-                // 規則1：天醫欺絕命
                 if (i < pairs.length - 1) {
                     const next = pairs[i + 1].energy;
+
+                    // 規則1：天醫欺絕命（只有當有絕命時才顯示）
                     if (current === '天醫' && next === '絕命') {
                         transformations.push({
                             type: '天醫欺絕命',
@@ -302,7 +309,7 @@
                         });
                     }
 
-                    // 規則2：延年壓六煞
+                    // 規則2：延年壓六煞（只有當有六煞時才顯示）
                     if (current === '延年' && next === '六煞') {
                         transformations.push({
                             type: '延年壓六煞',
@@ -311,36 +318,36 @@
                         });
                     }
 
-                    // 規則3：(生氣+延年)化禍害
-                    if (current === '生氣' && next === '延年') {
-                        transformations.push({
-                            type: '生氣+延年化禍害',
-                            position: i,
-                            description: '生氣配延年組合，能化解禍害磁場的口舌是非'
-                        });
-                    }
+                    // 規則3-5：化禍害（只有當號碼中有禍害磁場時才顯示）
+                    if (hasEnergy['禍害']) {
+                        if (current === '生氣' && next === '延年') {
+                            transformations.push({
+                                type: '生氣+延年化禍害',
+                                position: i,
+                                description: '生氣配延年組合，能化解禍害磁場的口舌是非'
+                            });
+                        }
 
-                    // 規則4：(生氣+伏位)化禍害
-                    if (current === '生氣' && next === '伏位') {
-                        transformations.push({
-                            type: '生氣+伏位化禍害',
-                            position: i,
-                            description: '生氣配伏位組合，能化解禍害磁場的負面影響'
-                        });
-                    }
+                        if (current === '生氣' && next === '伏位') {
+                            transformations.push({
+                                type: '生氣+伏位化禍害',
+                                position: i,
+                                description: '生氣配伏位組合，能化解禍害磁場的負面影響'
+                            });
+                        }
 
-                    // 規則5：(生氣+生氣)化禍害
-                    if (current === '生氣' && next === '生氣') {
-                        transformations.push({
-                            type: '生氣+生氣化禍害',
-                            position: i,
-                            description: '雙生氣組合，能化解禍害磁場，貴人運加倍'
-                        });
+                        if (current === '生氣' && next === '生氣') {
+                            transformations.push({
+                                type: '生氣+生氣化禍害',
+                                position: i,
+                                description: '雙生氣組合，能化解禍害磁場，貴人運加倍'
+                            });
+                        }
                     }
                 }
 
-                // 規則6：(生氣+天醫+延年)化五鬼（需要連續三個）
-                if (i < pairs.length - 2) {
+                // 規則6：(生氣+天醫+延年)化五鬼（只有當有五鬼時才顯示）
+                if (i < pairs.length - 2 && hasEnergy['五鬼']) {
                     if (pairs[i].energy === '生氣' &&
                         pairs[i + 1].energy === '天醫' &&
                         pairs[i + 2].energy === '延年') {
